@@ -36,8 +36,12 @@ $(document).ready(function() {
                 }
             },
             error: function(xhr, status, error) {
-                console.log('Terjadi kesalahan saat mengambil data: ', error);
-                alert('Terjadi kesalahan saat mengambil data.');
+                console.error('Error:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Terjadi Kesalahan',
+                    text: 'Data tidak ditemukan',
+                });
             }
         });
     }
@@ -185,9 +189,8 @@ $(document).on('click', '#loadMatrixBtn', function() {
                 // Menemukan nilai dari matriks yang sesuai dengan X dan Y
                 const cell = matrixData.find(item => item.x === x && item.y === y);
 
-                // Jika nilai ditemukan, tampilkan nilai, jika tidak, tampilkan kosong
                 const value = cell ? cell.value : '';
-                row.append('<td class="text-center">' + value + '</td>'); // Menambahkan nilai ke kolom
+                row.append('<td class="text-center">' + value + '</td>'); 
             }
             // Menambahkan baris ke tabel di modal
             $('#modalMatrixTable tbody').append(row);
@@ -206,7 +209,6 @@ const swalWithBootstrapButtons = Swal.mixin({
 });
 
 function confirmDelete(id) {
-    // Menampilkan SweetAlert untuk konfirmasi
     swalWithBootstrapButtons.fire({
         title: 'Apakah Anda yakin?',
         text: 'Data ini akan dihapus secara permanen!',
@@ -217,24 +219,21 @@ function confirmDelete(id) {
         reverseButtons: true
     }).then((result) => {
         if (result.isConfirmed) {
-            // Melakukan request DELETE ke API jika tombol "Hapus" ditekan
             $.ajax({
-                url: '/api/matrix/' + id,  // URL endpoint untuk menghapus data
+                url: '/api/matrix/' + id,  
                 type: 'DELETE',
                 data: {
-                    _token: $('meta[name="csrf-token"]').attr('content')  // CSRF token
+                    _token: $('meta[name="csrf-token"]').attr('content')  
                 },
                 success: function(response) {
-                    // Menampilkan pesan sukses dan reload halaman
                     Swal.fire({
                         icon: 'success',    
                         title: 'Data Berhasil Dihapus',
                     }).then(() => {
-                        location.reload();  // Reload halaman setelah berhasil dihapus
+                        location.reload();  
                     });
                 },
                 error: function(xhr, status, error) {
-                    // Menampilkan pesan error jika gagal
                     Swal.fire({
                         icon: 'error',
                         title: 'Terjadi Kesalahan',
